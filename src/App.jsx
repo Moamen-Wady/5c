@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide, ToastContainer, toast } from "react-toastify";
-import Loading from "./loading";
+import Loading from ".Loading";
 const notify = (e, msg) => {
   toast[e](msg, {
     position: "top-center",
