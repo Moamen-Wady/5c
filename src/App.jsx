@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 const Home = lazy(() => import("./Home"));
 import Dashboard from "./dashboard";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide, ToastContainer, toast } from "react-toastify";
@@ -32,6 +32,10 @@ export default function App() {
     <Router>
       <ToastContainer />
       <Suspense fallback={<Loading />}>
+      <header>
+        <Link to="/dbrd">Admin</Link>
+        <Link to="/">Home</Link>
+      </header>
         <Routes>
           <Route path="/" element={<Home notify={notify} />} />
           <Route path="/dbrd" element={<Dashboard notify={notify}/>} />

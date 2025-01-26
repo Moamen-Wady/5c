@@ -107,7 +107,7 @@ export default function Home({ notify }) {
   };
 
   return (
-    <div className="bgr">
+    <div>
       <picture>
         <source srcSet="/TICKETi.webp" />
         <img

@@ -9,6 +9,9 @@
     --r4: 8rem;
     --r5: 6rem;
   }
+  body header a {
+    font-size: var(--r1);
+  }
 }
 @media only screen and (max-width: 1999px) {
   :root {
@@ -69,6 +72,9 @@
     --r4: 2.6rem;
     --r5: 3rem;
   }
+  body header a {
+    font-size: var(--r105);
+  }
 }
 * {
   box-sizing: border-box;
@@ -83,4 +89,29 @@ body {
   padding: 0;
   margin: 0;
   border: 0;
+}
+header {
+  background-color: #0f2a49;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  display: flex; 
+  justify-content: flex-end;
+  align-items: center;
+}
+header a {
+  all: unset;
+  text-decoration: none;
+  display: inline-block;
+  width: fit-content;
+  padding: var(--r05);
+  margin: 0 var(--r05);
+  cursor: pointer;
+  background-color: rgb(245, 245, 245, 0.5);
+  border: 1px solid white;
+  border-radius: 3px;
+}
+header a:hover {
+  background-color: rgb(245, 245, 245, 0.8);
 }
