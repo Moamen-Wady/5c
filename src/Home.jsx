@@ -70,10 +70,10 @@ export default function Home({ notify }) {
 
     await api
       .post(`/reservations/`, {
-        userName: invoiceData.userName,
-        phoneNum1: invoiceData.phoneNum1,
-        year: invoiceData.year,
-        sid: invoiceData.sid,
+        userName: newInvoiceData.userName,
+        phoneNum1: newInvoiceData.phoneNum1,
+        year: newInvoiceData.year,
+        sid: newInvoiceData.sid,
       })
       .then((data) => {
         if (data.data.sts === "ok") {
