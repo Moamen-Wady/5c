@@ -12,7 +12,7 @@ const RELOAD = () => {
 };
 
 export default function Home({ notify }) {
-  var [dissub, setDissub] = useState([false, "all", "white", "black"]);
+  let [dissub, setDissub] = useState([false, "all", "white", "black"]);
 
   const throwInvoice = () => {
     setInvoice(false);
@@ -30,52 +30,50 @@ export default function Home({ notify }) {
   }
 
   //functions of frontend
-  var [userName, setUserName] = useState("");
-  var [Year, setYear] = useState("1");
-  var [Sid, setSid] = useState("");
-  var [Sidhash, setSidhash] = useState("");
-  var [phoneNumber1, setPhoneNumber1] = useState("");
-  var [invoice, setInvoice] = useState(true);
-  var [inpf, setinpf] = useState("block");
+  let [Sidhash, setSidhash] = useState("");
+  let [invoice, setInvoice] = useState(true);
+  let [inpf, setinpf] = useState("block");
 
-  const handleChangeName = (event) => {
-    var namevalue = event.target.value;
-    setUserName(namevalue);
-  };
-  const handleChangeYear = (event) => {
-    var numvalue = event.target.value;
-    setYear(numvalue);
-  };
-  const handleChangeSid = (event) => {
-    var numvalue = event.target.value;
-    setSid(numvalue);
-  };
-  const handleChangePhone1 = (event) => {
-    var phonevalue = event.target.value;
-    setPhoneNumber1(phonevalue);
-  };
+  let [invoiceData, setInvoiceData] = useState({
+    userName: "",
+    phoneNum1: "",
+    year: "",
+    sid: "",
+  });
 
-  function taker() {
-    setDissub([true, "none", "grey", "black"]);
-    if (userName === "" || phoneNumber1 === "" || Year === "" || Sid === "") {
-      notify("error", "PLEASE FILL ALL FIELDS IN THE FORM ");
-      setDissub([false, "all", "white", "black"]);
-    } else {
-      tableUpdater();
-      // notify("success", "Success!");
-      // setSidhash("");
-      // throwInvoice();
-    }
-  }
-  const tableUpdater = async () => {
+  const tableUpdater = async (e) => {
+    e.preventDefault();
     setDissub([true, "none", "grey", "black"]);
     notify("info", "Please Wait...");
+    let newInvoiceData = {
+      userName: document.getElementById("userName").value,
+      phoneNum1: document.getElementById("phoneNum1").value,
+      year: document.getElementById("year").value,
+      sid: document.getElementById("sid").value,
+    };
+    const phoneRegex = /^[0-9]\d{10,14}$/;
+    const englishRegex = /^[A-Za-z0-9 ]+$/;
+    const sidRegex = /^[0-9mM]+$/;
+    if (!englishRegex.test(newInvoiceData.userName)) {
+      notify("error", "Name is invalid!");
+      return setDissub([false, "all", "white", "black"]);
+    }
+    if (!sidRegex.test(newInvoiceData.sid)) {
+      notify("error", "Id is invalid!");
+      return setDissub([false, "all", "white", "black"]);
+    }
+    if (!phoneRegex.test(newInvoiceData.phoneNum1)) {
+      notify("error", "Phone number is invalid!");
+      return setDissub([false, "all", "white", "black"]);
+    }
+    setInvoiceData(newInvoiceData);
+
     await api
       .post(`/reservations/`, {
-        userName: userName,
-        phoneNum1: phoneNumber1,
-        sid: Sid,
-        year: Year,
+        userName: invoiceData.userName,
+        phoneNum1: invoiceData.phoneNum1,
+        year: invoiceData.year,
+        sid: invoiceData.sid,
       })
       .then((data) => {
         if (data.data.sts === "ok") {
@@ -96,10 +94,10 @@ export default function Home({ notify }) {
     const report = new JsPDF("p", "pt", "a2");
     report.setFontSize(30);
     report.addImage(document.querySelector("#imin"), "webp", 0, 0, 1200, 1200);
-    report.text(userName.toUpperCase(), 575, 600);
-    report.text(phoneNumber1, 575, 653);
-    report.text(Year, 575, 705);
-    report.text(Sid, 575, 757);
+    report.text(invoiceData.userName.toUpperCase(), 575, 600);
+    report.text(invoiceData.phoneNum1, 575, 653);
+    report.text(invoiceData.year, 575, 705);
+    report.text(invoiceData.sid, 575, 757);
     report.text(Sidhash, 575, 809);
     return new Promise(() => {
       report.save("invoice.pdf");
@@ -118,20 +116,34 @@ export default function Home({ notify }) {
           loading="lazy"
         />
       </picture>
-      <div className="inputForm" style={{ display: inpf }}>
+      <form
+        className="inputForm"
+        onSubmit={tableUpdater}
+        method="POST"
+        id="form"
+        style={{ display: inpf }}
+      >
         <div>
           <div>
-            <input type="text" onChange={handleChangeName} />
-          </div>
-          <div>
             <input
+              required
               type="text"
-              pattern="^\+?[0-9]\d{11}$"
-              onChange={handleChangePhone1}
+              id="userName"
+              name="userName"
+              pattern="^[A-Za-z ]+$"
             />
           </div>
           <div>
-            <select onChange={handleChangeYear}>
+            <input
+              required
+              id="phoneNum1"
+              name="phoneNum1"
+              type="text"
+              pattern="^[0-9]\d{10,14}$"
+            />
+          </div>
+          <div>
+            <select id="year" name="year">
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -141,11 +153,17 @@ export default function Home({ notify }) {
             </select>
           </div>
           <div>
-            <input type="text" onChange={handleChangeSid} />
+            <input
+              required
+              type="text"
+              id="sid"
+              name="sid"
+              pattern="^[0-9mM ]+$"
+            />
           </div>
         </div>
         <button
-          onClick={taker}
+          type="submit"
           className="slctbtn"
           disabled={dissub[0]}
           style={{
@@ -156,7 +174,7 @@ export default function Home({ notify }) {
         >
           Register
         </button>
-      </div>
+      </form>
 
       <div
         className="invoice"
@@ -165,16 +183,16 @@ export default function Home({ notify }) {
         <div className="invoiceForm">
           <div>
             <div>
-              <input type="text" disabled value={userName} />
+              <input type="text" disabled value={invoiceData.userName} />
             </div>
             <div>
-              <input type="text" disabled value={phoneNumber1} />
+              <input type="text" disabled value={invoiceData.phoneNum1} />
             </div>
             <div>
-              <input type="text" disabled value={Year} />
+              <input type="text" disabled value={invoiceData.year} />
             </div>
             <div>
-              <input type="text" disabled value={Sid} />
+              <input type="text" disabled value={invoiceData.sid} />
             </div>
             <div>
               <input type="text" disabled value="######" />
