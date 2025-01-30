@@ -96,15 +96,28 @@ header {
   text-align: center;
   padding: 0.5rem;
   font-family: sans-serif;
-  display: flex; 
-  justify-content: flex-end;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header > div {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+header > div > div {
+  width: max-content;
+  display: flex;
+  justify-content: flex-start;
   align-items: center;
 }
 header a {
   all: unset;
   text-decoration: none;
-  display: inline-block;
-  width: fit-content;
+  display: block;
+  width: max-content;
   padding: var(--r05);
   margin: 0 var(--r05);
   cursor: pointer;

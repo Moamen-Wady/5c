@@ -1,15 +1,8 @@
+import { Link } from "react-router-dom";
 import "./Home.css";
 import api from "./api";
 import JsPDF from "jspdf";
 import { useCallback, memo, useState } from "react";
-
-const RELOAD = () => {
-  return new Promise(() => {
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-  });
-};
 
 const FormComp = memo(({ tableUpdater, dissub }) => {
   return (
@@ -117,7 +110,13 @@ export default function Home({ notify }) {
     year: "",
     sid: "",
   });
-
+  const RELOAD = useCallback(() => {
+    return new Promise(() => {
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    });
+  }, []);
   const tableUpdater = useCallback(async (e) => {
     e.preventDefault();
     setDissub([true, "none", "grey", "black"]);
@@ -185,6 +184,14 @@ export default function Home({ notify }) {
 
   return (
     <div>
+      <header>
+        <div>
+          <div>
+            <Link to="/dbrd">Admin</Link>
+            <Link to="/">Home</Link>
+          </div>
+        </div>
+      </header>
       <picture>
         <source srcSet="/TICKETi.webp" />
         <img

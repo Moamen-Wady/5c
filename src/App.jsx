@@ -1,15 +1,14 @@
 import { lazy, Suspense, useEffect, useCallback, memo } from "react";
-const Home = lazy(() => import("./Home"));
-const Dashboard = lazy(() => import("./dashboard"));
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import Loading from "./Loading";
 
-const HomePage = memo(Home);
-const LoadingPage = memo(Loading);
-const DashboardPage = memo(Dashboard);
+const LoadingC = memo(Loading);
+
+const Home = lazy(() => import("./Home"));
+const Dashboard = lazy(() => import("./dashboard"));
 
 export default function App() {
   useEffect(() => {
@@ -39,14 +38,10 @@ export default function App() {
   return (
     <Router>
       <ToastContainer />
-      <Suspense fallback={<LoadingPage />}>
-        <header>
-          <Link to="/dbrd">Admin</Link>
-          <Link to="/">Home</Link>
-        </header>
+      <Suspense fallback={<LoadingC />}>
         <Routes>
-          <Route path="/" element={<HomePage notify={notify} />} />
-          <Route path="/dbrd" element={<DashboardPage notify={notify} />} />
+          <Route path="/" element={<Home notify={notify} />} />
+          <Route path="/dbrd" element={<Dashboard notify={notify} />} />
         </Routes>
       </Suspense>
     </Router>
