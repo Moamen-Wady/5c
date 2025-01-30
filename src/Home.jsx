@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import "./Home.css";
 import api from "./api";
 import JsPDF from "jspdf";
@@ -184,14 +183,6 @@ export default function Home({ notify }) {
 
   return (
     <div>
-      <header>
-        <div>
-          <div>
-            <Link to="/dbrd">Admin</Link>
-            <Link to="/">Home</Link>
-          </div>
-        </div>
-      </header>
       <picture>
         <source srcSet="/TICKETi.webp" />
         <img

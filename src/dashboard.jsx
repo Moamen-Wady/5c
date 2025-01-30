@@ -2,7 +2,6 @@ import "./dashboard.css";
 import JsPDF from "jspdf";
 import { useState, useEffect, useCallback, memo } from "react";
 import api, { isCancel } from "./api";
-import { Link, Router, useNavigate } from "react-router-dom";
 
 const InvoiceTable = memo(
   ({ downloadInvoiceTable, dissub, getResvs, resvs }) => {
@@ -80,11 +79,9 @@ const LoginForm = memo(({ submitAdmin, dissub }) => {
   );
 });
 
-export default function Dashboard({ notify }) {
+export default function Dashboard({ notify, Authorized, setAuthorized }) {
   let [resvs, setResvs] = useState([]);
-  let [Authorized, setAuthorized] = useState("");
   let [dissub, setDissub] = useState([false, "all", "white", "black"]);
-  const navigate = useNavigate();
 
   const getResvs = useCallback(() => {
     const controller = new AbortController();
@@ -102,13 +99,9 @@ export default function Dashboard({ notify }) {
   }, []);
 
   useEffect(() => {
-    let admin = localStorage.getItem("admin");
-    if (admin) {
-      setAuthorized(admin);
-    }
     const abortFetch = getResvs();
     return () => abortFetch();
-  }, [localStorage]);
+  }, [getResvs]);
 
   const downloadInvoiceTable = useCallback(async () => {
     const report = new JsPDF("portrait", "pt", "a1");
@@ -116,7 +109,7 @@ export default function Dashboard({ notify }) {
       report.save("attendance.pdf");
       notify("success", "Downloading PDF");
     });
-  });
+  }, []);
 
   const submitAdmin = useCallback(async (e) => {
     e.preventDefault();
@@ -148,25 +141,10 @@ export default function Dashboard({ notify }) {
       });
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem("admin");
-    setAuthorized("");
-    navigate("/");
-  });
-
   return (
     <div>
       {Authorized ? (
         <>
-          <header>
-            <div>
-              <div>
-                <Link to="/dbrd">Admin</Link>
-                <Link to="/">Home</Link>
-              </div>
-              <a onClick={logout}>Log Out</a>
-            </div>
-          </header>
           <InvoiceTable
             downloadInvoiceTable={downloadInvoiceTable}
             dissub={dissub}
@@ -176,14 +154,6 @@ export default function Dashboard({ notify }) {
         </>
       ) : (
         <>
-          <header>
-            <div>
-              <div>
-                <Link to="/dbrd">Admin</Link>
-                <Link to="/">Home</Link>
-              </div>
-            </div>
-          </header>
           <LoginForm submitAdmin={submitAdmin} dissub={dissub} />
         </>
       )}

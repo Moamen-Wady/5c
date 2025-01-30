@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useCallback, memo } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { lazy, Suspense, useEffect, useCallback, memo, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide, ToastContainer, toast } from "react-toastify";
@@ -22,6 +22,15 @@ export default function App() {
       );
     }
   }, []);
+  let [Authorized, setAuthorized] = useState("");
+
+  useEffect(() => {
+    let admin = localStorage.getItem("admin");
+    if (admin) {
+      setAuthorized(admin);
+    }
+  }, [localStorage]);
+
   const notify = useCallback((e, msg) => {
     toast[e](msg, {
       position: "top-center",
@@ -35,13 +44,37 @@ export default function App() {
       transition: Slide,
     });
   }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem("admin");
+    setAuthorized("");
+  }, []);
+
   return (
     <Router>
       <ToastContainer />
       <Suspense fallback={<LoadingC />}>
+        <header>
+          <div>
+            <div>
+              <Link to="/dbrd">Admin</Link>
+              <Link to="/">Home</Link>
+            </div>
+            {Authorized ? <a onClick={logout}>Log Out</a> : <></>}
+          </div>
+        </header>
         <Routes>
           <Route path="/" element={<Home notify={notify} />} />
-          <Route path="/dbrd" element={<Dashboard notify={notify} />} />
+          <Route
+            path="/dbrd"
+            element={
+              <Dashboard
+                notify={notify}
+                Authorized={Authorized}
+                setAuthorized={setAuthorized}
+              />
+            }
+          />
         </Routes>
       </Suspense>
     </Router>
