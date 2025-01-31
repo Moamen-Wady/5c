@@ -29,7 +29,7 @@ export default function App() {
     if (admin) {
       setAuthorized(admin);
     }
-  }, [localStorage]);
+  }, []);
 
   const notify = useCallback((e, msg) => {
     toast[e](msg, {
