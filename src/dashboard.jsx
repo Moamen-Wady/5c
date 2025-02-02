@@ -3,64 +3,67 @@ import JsPDF from "jspdf";
 import { useState, useEffect, useCallback, memo } from "react";
 import api, { isCancel } from "./api";
 
-const InvoiceTable = memo(
-  ({ downloadInvoiceTable, dissub, getResvs, resvs }) => {
-    return (
-      <>
-        <div className="btnCont">
-          <button
-            className="dwn"
-            onClick={downloadInvoiceTable}
-            disabled={dissub[0]}
-            style={{
-              pointerEvents: dissub[1],
-              backgroundColor: dissub[2],
-              color: dissub[3],
-            }}
-          >
-            Download PDF
-          </button>
-          <button
-            className="dwn"
-            onClick={getResvs}
-            disabled={dissub[0]}
-            style={{
-              pointerEvents: dissub[1],
-              backgroundColor: dissub[2],
-              color: dissub[3],
-            }}
-          >
-            Refresh List
-          </button>
-        </div>
-        <table className="Displaytable">
-          <tbody>
-            <tr>
-              <th>Number</th>
-              <th>Name</th>
-              <th>Phone Number</th>
-              <th>Year</th>
-              <th>Student ID</th>
-            </tr>
-            {resvs.map((user, index) => {
-              return (
-                <tr user={user} key={user.id + user.year}>
-                  <td>{index + 1}</td>
-                  <td>{user.userName}</td>
-                  <td>{user.phoneNum1}</td>
-                  <td>{user.year}</td>
-                  <td>{user.sid}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </>
-    );
-  }
-);
+const InvoiceTable = memo(function InvoiceTableComponent({
+  downloadInvoiceTable,
+  dissub,
+  getResvs,
+  resvs,
+}) {
+  return (
+    <>
+      <div className="btnCont">
+        <button
+          className="dwn"
+          onClick={downloadInvoiceTable}
+          disabled={dissub[0]}
+          style={{
+            pointerEvents: dissub[1],
+            backgroundColor: dissub[2],
+            color: dissub[3],
+          }}
+        >
+          Download PDF
+        </button>
+        <button
+          className="dwn"
+          onClick={getResvs}
+          disabled={dissub[0]}
+          style={{
+            pointerEvents: dissub[1],
+            backgroundColor: dissub[2],
+            color: dissub[3],
+          }}
+        >
+          Refresh List
+        </button>
+      </div>
+      <table className="Displaytable">
+        <tbody>
+          <tr>
+            <th>Number</th>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Year</th>
+            <th>Student ID</th>
+          </tr>
+          {resvs.map((resv, index) => {
+            return (
+              <tr resv={resv} key={resv.id + resv.year}>
+                <td>{index + 1}</td>
+                <td>{resv.resvName}</td>
+                <td>{resv.phoneNum1}</td>
+                <td>{resv.year}</td>
+                <td>{resv.sid}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
+  );
+});
 
-const LoginForm = memo(({ submitAdmin, dissub }) => {
+const LoginForm = memo(function LoginFormComponent({ submitAdmin, dissub }) {
   return (
     <form id="login" onSubmit={(e) => submitAdmin(e)} method="POST">
       <input type="email" name="email" id="email" />
@@ -79,7 +82,7 @@ const LoginForm = memo(({ submitAdmin, dissub }) => {
   );
 });
 
-export default function Dashboard({ notify, Authorized, setAuthorized }) {
+export default memo(function Dashboard({ notify, Authorized, setAuthorized }) {
   let [resvs, setResvs] = useState([]);
   let [dissub, setDissub] = useState([false, "all", "white", "black"]);
 
@@ -159,4 +162,4 @@ export default function Dashboard({ notify, Authorized, setAuthorized }) {
       )}
     </div>
   );
-}
+});

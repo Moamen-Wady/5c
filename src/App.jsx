@@ -1,16 +1,15 @@
-import { lazy, Suspense, useEffect, useCallback, memo, useState } from "react";
+import { lazy, Suspense, useEffect, useCallback, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import Loading from "./Loading";
 
-const LoadingC = memo(Loading);
-
 const Home = lazy(() => import("./Home"));
 const Dashboard = lazy(() => import("./dashboard"));
 
 export default function App() {
+  let [Authorized, setAuthorized] = useState("");
   useEffect(() => {
     if (navigator.userAgent.match(/samsung/i)) {
       alert(
@@ -21,10 +20,6 @@ export default function App() {
           "We recommend Google Chrome, Microsoft Edge, or Firefox."
       );
     }
-  }, []);
-  let [Authorized, setAuthorized] = useState("");
-
-  useEffect(() => {
     let admin = localStorage.getItem("admin");
     if (admin) {
       setAuthorized(admin);
@@ -53,7 +48,7 @@ export default function App() {
   return (
     <Router>
       <ToastContainer />
-      <Suspense fallback={<LoadingC />}>
+      <Suspense fallback={<Loading />}>
         <header>
           <div>
             <div>

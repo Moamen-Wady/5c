@@ -3,7 +3,7 @@ import api from "./api";
 import JsPDF from "jspdf";
 import { useCallback, memo, useState } from "react";
 
-const FormComp = memo(({ tableUpdater, dissub }) => {
+const FormComp = memo(function FormComponent({ tableUpdater, dissub }) {
   return (
     <form className="inputForm" onSubmit={tableUpdater} method="POST" id="form">
       <div>
@@ -61,7 +61,11 @@ const FormComp = memo(({ tableUpdater, dissub }) => {
   );
 });
 
-const InvoiceComp = memo(({ downloadInvoiceTable, invoiceData, dissub }) => {
+const InvoiceComp = memo(function InvoiceComponent({
+  downloadInvoiceTable,
+  invoiceData,
+  dissub,
+}) {
   return (
     <div className="invoice">
       <div className="invoiceForm">
@@ -99,7 +103,7 @@ const InvoiceComp = memo(({ downloadInvoiceTable, invoiceData, dissub }) => {
   );
 });
 
-export default function Home({ notify }) {
+export default memo(function Home({ notify }) {
   let [dissub, setDissub] = useState([false, "all", "white", "black"]);
   let [Sidhash, setSidhash] = useState("");
   let [invoice, setInvoice] = useState("none");
@@ -211,4 +215,4 @@ export default function Home({ notify }) {
       </div>
     </div>
   );
-}
+});
