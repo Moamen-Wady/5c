@@ -161,11 +161,12 @@ export default memo(function Home({ notify }) {
           setInvoice("block");
         } else {
           notify("error", data.data.message);
-          setDissub([false, "all", "white", "black"]);
         }
       })
       .catch(() => {
         notify("error", "Network Error, Please Try Again");
+      })
+      .finally(() => {
         setDissub([false, "all", "white", "black"]);
       });
   }, []);
