@@ -132,14 +132,14 @@ export default memo(function Dashboard({ notify, Authorized, setAuthorized }) {
           notify("success", "Logged in Successfully!");
           setAuthorized(newAdmin.email);
           localStorage.setItem("admin", newAdmin.email);
-          setDissub([false, "all", "white", "black"]);
         } else {
           notify("error", data.data.message);
-          setDissub([false, "all", "white", "black"]);
         }
       })
       .catch(() => {
         notify("error", "Network Error, Please Try Again.");
+      })
+      .finally(() => {
         setDissub([false, "all", "white", "black"]);
       });
   }, []);

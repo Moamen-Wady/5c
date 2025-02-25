@@ -48,7 +48,8 @@ export default function App() {
   return (
     <Router>
       <ToastContainer />
-      <Suspense fallback={<Loading />}>
+      <Loading isPage={true} />
+      <Suspense fallback={<Loading isPage={false} />}>
         <header>
           <div>
             <div>
