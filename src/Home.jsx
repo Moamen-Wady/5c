@@ -3,7 +3,7 @@ import api from "./api";
 import JsPDF from "jspdf";
 import { useCallback, memo, useState } from "react";
 
-const FormComp = memo(function FormComponent({ tableUpdater, dissub }) {
+const FormComp = memo(function FormComponent({ tableUpdater, buttonState }) {
   return (
     <form className="inputForm" onSubmit={tableUpdater} method="POST" id="form">
       <div>
@@ -48,11 +48,11 @@ const FormComp = memo(function FormComponent({ tableUpdater, dissub }) {
       <button
         type="submit"
         className="slctbtn"
-        disabled={dissub[0]}
+        disabled={buttonState[0]}
         style={{
-          pointerEvents: dissub[1],
-          backgroundColor: dissub[2],
-          color: dissub[3],
+          pointerEvents: buttonState[1],
+          backgroundColor: buttonState[2],
+          color: buttonState[3],
         }}
       >
         Register
@@ -64,7 +64,7 @@ const FormComp = memo(function FormComponent({ tableUpdater, dissub }) {
 const InvoiceComp = memo(function InvoiceComponent({
   downloadInvoiceTable,
   invoiceData,
-  dissub,
+  buttonState,
 }) {
   return (
     <div className="invoice">
@@ -90,11 +90,11 @@ const InvoiceComp = memo(function InvoiceComponent({
       <button
         onClick={downloadInvoiceTable}
         className="dwnbtn"
-        disabled={dissub[0]}
+        disabled={buttonState[0]}
         style={{
-          pointerEvents: dissub[1],
-          backgroundColor: dissub[2],
-          color: dissub[3],
+          pointerEvents: buttonState[1],
+          backgroundColor: buttonState[2],
+          color: buttonState[3],
         }}
       >
         Download Ticket To View Code
@@ -103,11 +103,10 @@ const InvoiceComp = memo(function InvoiceComponent({
   );
 });
 
-export default memo(function Home({ notify }) {
-  let [dissub, setDissub] = useState([false, "all", "white", "black"]);
-  let [Sidhash, setSidhash] = useState("");
-  let [invoice, setInvoice] = useState("none");
-  let [invoiceData, setInvoiceData] = useState({
+export default memo(function Home({ notify, buttonState, setButtonState }) {
+  const [Sidhash, setSidhash] = useState("");
+  const [invoice, setInvoice] = useState("none");
+  const [invoiceData, setInvoiceData] = useState({
     userName: "",
     phoneNum1: "",
     year: "",
@@ -122,7 +121,7 @@ export default memo(function Home({ notify }) {
   }, []);
   const tableUpdater = useCallback(async (e) => {
     e.preventDefault();
-    setDissub([true, "none", "grey", "black"]);
+    setButtonState([true, "none", "grey", "black"]);
     notify("info", "Please Wait...");
     let newInvoiceData = {
       userName: document.getElementById("userName").value,
@@ -135,15 +134,15 @@ export default memo(function Home({ notify }) {
     const sidRegex = /^[0-9mM]+$/;
     if (!englishRegex.test(newInvoiceData.userName)) {
       notify("error", "Name is invalid!");
-      return setDissub([false, "all", "white", "black"]);
+      return setButtonState([false, "all", "white", "black"]);
     }
     if (!sidRegex.test(newInvoiceData.sid)) {
       notify("error", "Id is invalid!");
-      return setDissub([false, "all", "white", "black"]);
+      return setButtonState([false, "all", "white", "black"]);
     }
     if (!phoneRegex.test(newInvoiceData.phoneNum1)) {
       notify("error", "Phone number is invalid!");
-      return setDissub([false, "all", "white", "black"]);
+      return setButtonState([false, "all", "white", "black"]);
     }
     setInvoiceData(newInvoiceData);
 
@@ -167,7 +166,7 @@ export default memo(function Home({ notify }) {
         notify("error", "Network Error, Please Try Again");
       })
       .finally(() => {
-        setDissub([false, "all", "white", "black"]);
+        setButtonState([false, "all", "white", "black"]);
       });
   }, []);
 
@@ -199,12 +198,12 @@ export default memo(function Home({ notify }) {
         />
       </picture>
       {invoice === "none" ? (
-        <FormComp tableUpdater={tableUpdater} dissub={dissub} />
+        <FormComp tableUpdater={tableUpdater} buttonState={buttonState} />
       ) : (
         <InvoiceComp
           downloadInvoiceTable={downloadInvoiceTable}
           invoiceData={invoiceData}
-          dissub={dissub}
+          buttonState={buttonState}
         />
       )}
 

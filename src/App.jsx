@@ -11,8 +11,15 @@ const Home = lazy(() => import("./Home"));
 const Dashboard = lazy(() => import("./dashboard"));
 
 export default function App() {
-  let [Authorized, setAuthorized] = useState("");
+  const [Authorized, setAuthorized] = useState("");
   const [loading, setLoading] = useState(false);
+  const [buttonState, setButtonState] = useState([
+    false,
+    "all",
+    "white",
+    "black",
+  ]);
+
   const notify = (e, msg) => {
     toast[e](msg, {
       position: "top-center",
@@ -51,7 +58,16 @@ export default function App() {
           </header>
 
           <Routes>
-            <Route path="/" element={<Home notify={notify} />} />
+            <Route
+              path="/"
+              element={
+                <Home
+                  notify={notify}
+                  buttonState={buttonState}
+                  setButtonState={setButtonState}
+                />
+              }
+            />
             <Route
               path="/dbrd"
               element={
@@ -59,6 +75,8 @@ export default function App() {
                   notify={notify}
                   Authorized={Authorized}
                   setAuthorized={setAuthorized}
+                  buttonState={buttonState}
+                  setButtonState={setButtonState}
                 />
               }
             />

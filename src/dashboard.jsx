@@ -5,7 +5,7 @@ import api, { isCancel } from "./api";
 
 const InvoiceTable = memo(function InvoiceTableComponent({
   downloadInvoiceTable,
-  dissub,
+  buttonState,
   getResvs,
   resvs,
 }) {
@@ -15,11 +15,11 @@ const InvoiceTable = memo(function InvoiceTableComponent({
         <button
           className="dwn"
           onClick={downloadInvoiceTable}
-          disabled={dissub[0]}
+          disabled={buttonState[0]}
           style={{
-            pointerEvents: dissub[1],
-            backgroundColor: dissub[2],
-            color: dissub[3],
+            pointerEvents: buttonState[1],
+            backgroundColor: buttonState[2],
+            color: buttonState[3],
           }}
         >
           Download PDF
@@ -27,11 +27,11 @@ const InvoiceTable = memo(function InvoiceTableComponent({
         <button
           className="dwn"
           onClick={getResvs}
-          disabled={dissub[0]}
+          disabled={buttonState[0]}
           style={{
-            pointerEvents: dissub[1],
-            backgroundColor: dissub[2],
-            color: dissub[3],
+            pointerEvents: buttonState[1],
+            backgroundColor: buttonState[2],
+            color: buttonState[3],
           }}
         >
           Refresh List
@@ -63,7 +63,7 @@ const InvoiceTable = memo(function InvoiceTableComponent({
   );
 });
 
-const LoginForm = memo(function LoginFormComponent({ submitAdmin, dissub }) {
+const LoginForm = memo(function LoginFormComponent({ submitAdmin, buttonState }) {
   return (
     <form id="login" onSubmit={(e) => submitAdmin(e)} method="POST">
       <input type="email" name="email" id="email" />
@@ -71,20 +71,19 @@ const LoginForm = memo(function LoginFormComponent({ submitAdmin, dissub }) {
       <input
         type="submit"
         value="Login"
-        disabled={dissub[0]}
+        disabled={buttonState[0]}
         style={{
-          pointerEvents: dissub[1],
-          backgroundColor: dissub[2],
-          color: dissub[3],
+          pointerEvents: buttonState[1],
+          backgroundColor: buttonState[2],
+          color: buttonState[3],
         }}
       />
     </form>
   );
 });
 
-export default memo(function Dashboard({ notify, Authorized, setAuthorized }) {
-  let [resvs, setResvs] = useState([]);
-  let [dissub, setDissub] = useState([false, "all", "white", "black"]);
+export default memo(function Dashboard({ notify, Authorized, setAuthorized, buttonState, setButtonState }) {
+  const [resvs, setResvs] = useState([]);
 
   const getResvs = useCallback(() => {
     const controller = new AbortController();
@@ -116,7 +115,7 @@ export default memo(function Dashboard({ notify, Authorized, setAuthorized }) {
 
   const submitAdmin = useCallback(async (e) => {
     e.preventDefault();
-    setDissub([true, "none", "grey", "black"]);
+    setButtonState([true, "none", "grey", "black"]);
     notify("info", "Please Wait...");
     let newAdmin = {
       email: document.getElementById("email").value,
@@ -140,7 +139,7 @@ export default memo(function Dashboard({ notify, Authorized, setAuthorized }) {
         notify("error", "Network Error, Please Try Again.");
       })
       .finally(() => {
-        setDissub([false, "all", "white", "black"]);
+        setButtonState([false, "all", "white", "black"]);
       });
   }, []);
 
@@ -150,14 +149,14 @@ export default memo(function Dashboard({ notify, Authorized, setAuthorized }) {
         <>
           <InvoiceTable
             downloadInvoiceTable={downloadInvoiceTable}
-            dissub={dissub}
+            buttonState={buttonState}
             getResvs={getResvs}
             resvs={resvs}
           />
         </>
       ) : (
         <>
-          <LoginForm submitAdmin={submitAdmin} dissub={dissub} />
+          <LoginForm submitAdmin={submitAdmin} buttonState={buttonState} />
         </>
       )}
     </div>
