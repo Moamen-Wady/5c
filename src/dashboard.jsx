@@ -50,7 +50,7 @@ const InvoiceTable = memo(function InvoiceTableComponent({
             return (
               <tr resv={resv} key={resv.id + resv.year}>
                 <td>{index + 1}</td>
-                <td>{resv.resvName}</td>
+                <td>{resv.userName}</td>
                 <td>{resv.phoneNum1}</td>
                 <td>{resv.year}</td>
                 <td>{resv.sid}</td>
