@@ -12,12 +12,7 @@
       rel="preconnect"
       href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500&display=swap"
     />
-    <link
-      rel="preload"
-      href="/src/assets/main.css"
-      as="style"
-      id="main-css"
-    />
+    <link rel="preload" href="/src/assets/main.css" as="style" id="main-css" />
     <meta
       name="description"
       content="Reservation Page of Med. School Conference"
@@ -42,15 +37,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-      function rel() {
-        window.onload = () => {
-          const style = document.getElementById("main-css");
-          style.rel = "stylesheet";
-        };
-      }
-      window.onload = rel;
-    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
