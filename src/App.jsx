@@ -11,7 +11,7 @@ const Home = lazy(() => import("./Home"));
 const Dashboard = lazy(() => import("./dashboard"));
 
 export default function App() {
-  const [Authorized, setAuthorized] = useState("");
+  const [Authorized, setAuthorized] = useState("m");
   const [loading, setLoading] = useState(false);
   const [buttonState, setButtonState] = useState([
     false,
