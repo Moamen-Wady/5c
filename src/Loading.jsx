@@ -9,11 +9,18 @@ export default function Loading() {
         transform: "translate(-50%,-50%)",
       }}
     >
-      <img
-        src="loading.gif"
-        alt="loading"
-        style={{ width: "20vw", height: "20vw" }}
-      />
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          width: "20vw",
+          height: "20vw",
+        }}
+      >
+        <source src="/loading.webm" type="video/webm" />
+      </video>
     </div>
   );
 }

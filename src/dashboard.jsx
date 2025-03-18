@@ -1,6 +1,6 @@
+import { useState, useEffect, useCallback, memo, lazy } from "react";
 import "./dashboard.css";
-import JsPDF from "jspdf";
-import { useState, useEffect, useCallback, memo } from "react";
+const JsPDF = lazy(() => import("jspdf"));
 import api, { isCancel } from "./api";
 
 const InvoiceTable = memo(function InvoiceTableComponent({
@@ -63,7 +63,10 @@ const InvoiceTable = memo(function InvoiceTableComponent({
   );
 });
 
-const LoginForm = memo(function LoginFormComponent({ submitAdmin, buttonState }) {
+const LoginForm = memo(function LoginFormComponent({
+  submitAdmin,
+  buttonState,
+}) {
   return (
     <form id="login" onSubmit={(e) => submitAdmin(e)} method="POST">
       <input type="email" name="email" id="email" />
@@ -82,7 +85,13 @@ const LoginForm = memo(function LoginFormComponent({ submitAdmin, buttonState })
   );
 });
 
-export default memo(function Dashboard({ notify, Authorized, setAuthorized, buttonState, setButtonState }) {
+export default memo(function Dashboard({
+  notify,
+  Authorized,
+  setAuthorized,
+  buttonState,
+  setButtonState,
+}) {
   const [resvs, setResvs] = useState([]);
 
   const getResvs = useCallback(() => {

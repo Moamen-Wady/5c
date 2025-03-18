@@ -1,7 +1,7 @@
+import { useCallback, memo, useState, lazy } from "react";
+const JsPDF = lazy(() => import("jspdf"));
 import "./Home.css";
 import api from "./api";
-import JsPDF from "jspdf";
-import { useCallback, memo, useState } from "react";
 
 const FormComp = memo(function FormComponent({ tableUpdater, buttonState }) {
   return (
@@ -207,12 +207,12 @@ export default memo(function Home({ notify, buttonState, setButtonState }) {
         />
       )}
 
-      <div className="copyRights">
+      {/* <div className="copyRights">
         <p>
           Copyright &#169;{new Date().getFullYear()}{" "}
           <a href="https://wa.me/+201014943278">Moamen Wady</a>
         </p>
-      </div>
+      </div> */}
     </div>
   );
 });
