@@ -28,6 +28,7 @@ export default defineConfig({
               upgradeInsecureRequests: [],
             },
           },
+          crossOriginOpenerPolicy: { policy: "same-origin" },
         })
       );
     },
