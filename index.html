@@ -16,7 +16,7 @@
       rel="preload"
       href="/src/assets/main.css"
       as="style"
-      onload="this.rel='stylesheet'"
+      id="main-css"
     />
     <meta
       name="description"
@@ -42,6 +42,15 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      function rel() {
+        window.onload = () => {
+          const style = document.getElementById("main-css");
+          style.rel = "stylesheet";
+        };
+      }
+      window.onload = rel;
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
