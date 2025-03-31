@@ -1,15 +1,9 @@
-import { useState, useEffect, useCallback, memo, lazy } from "react";
+import { useState, useEffect, useCallback, memo, useRef } from "react";
 import "./dashboard.css";
-const JsPDF = lazy(() => import("jspdf"));
 import api, { isCancel } from "./api";
 
-const InvoiceTable = memo(function InvoiceTableComponent({
-  downloadInvoiceTable,
-  buttonState,
-  getResvs,
-  resvs,
-}) {
-  return (
+const InvoiceTable = memo(
+  ({ downloadInvoiceTable, buttonState, getResvs, resvs }) => (
     <>
       <div className="btnCont">
         <button
@@ -38,7 +32,7 @@ const InvoiceTable = memo(function InvoiceTableComponent({
         </button>
       </div>
       <table className="Displaytable">
-        <tbody>
+        <thead>
           <tr>
             <th>Number</th>
             <th>Name</th>
@@ -46,31 +40,37 @@ const InvoiceTable = memo(function InvoiceTableComponent({
             <th>Year</th>
             <th>Student ID</th>
           </tr>
-          {resvs.map((resv, index) => {
-            return (
-              <tr resv={resv} key={resv.id + resv.year}>
-                <td>{index + 1}</td>
-                <td>{resv.userName}</td>
-                <td>{resv.phoneNum1}</td>
-                <td>{resv.year}</td>
-                <td>{resv.sid}</td>
-              </tr>
-            );
-          })}
+        </thead>
+        <tbody>
+          {resvs.map((resv, index) => (
+            <tr key={resv.sid + resv.year}>
+              <td>{index + 1}</td>
+              <td>{resv.userName}</td>
+              <td>{resv.phoneNum1}</td>
+              <td>{resv.year}</td>
+              <td>{resv.sid}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </>
-  );
-});
+  )
+);
 
-const LoginForm = memo(function LoginFormComponent({
-  submitAdmin,
-  buttonState,
-}) {
+const LoginForm = memo(({ submitAdmin, buttonState }) => {
+  const emailRef = useRef(null);
+  const pwRef = useRef(null);
+
   return (
-    <form id="login" onSubmit={(e) => submitAdmin(e)} method="POST">
-      <input type="email" name="email" id="email" />
-      <input type="password" name="pw" id="pw" />
+    <form
+      id="login"
+      onSubmit={(e) =>
+        submitAdmin(e, emailRef.current.value, pwRef.current.value)
+      }
+      method="POST"
+    >
+      <input type="email" name="email" id="email" ref={emailRef} required />
+      <input type="password" name="pw" id="pw" ref={pwRef} required />
       <input
         type="submit"
         value="Login"
@@ -106,67 +106,68 @@ export default memo(function Dashboard({
           notify("error", "NETWORK ERROR, Failed to fetch reservations");
         }
       });
+
     return () => controller.abort();
-  }, []);
+  }, [notify]);
 
   useEffect(() => {
-    const abortFetch = getResvs();
-    return () => abortFetch();
+    getResvs();
   }, [getResvs]);
 
   const downloadInvoiceTable = useCallback(async () => {
-    const report = new JsPDF("portrait", "pt", "a1");
-    await report.html(document.querySelector(".Displaytable")).then(() => {
-      report.save("attendance.pdf");
-      notify("success", "Downloading PDF");
-    });
-  }, []);
+    try {
+      const { default: JsPDF } = await import("jspdf");
+      const report = new JsPDF("portrait", "pt", "a1");
+      const tableElement = document.querySelector(".Displaytable");
 
-  const submitAdmin = useCallback(async (e) => {
-    e.preventDefault();
-    setButtonState([true, "none", "grey", "black"]);
-    notify("info", "Please Wait...");
-    let newAdmin = {
-      email: document.getElementById("email").value,
-      pw: document.getElementById("pw").value,
-    };
-    await api
-      .post(`/admin/hat`, {
-        email: newAdmin.email,
-        pw: newAdmin.pw,
-      })
-      .then((data) => {
-        if (data.data.sts === "ok") {
+      if (tableElement) {
+        await report.html(tableElement);
+        report.save("attendance.pdf");
+        notify("success", "Downloading PDF");
+      } else {
+        notify("error", "Table not found");
+      }
+    } catch (error) {
+      notify("error", "Failed to generate PDF");
+    }
+  }, [notify]);
+
+  const submitAdmin = useCallback(
+    async (e, email, pw) => {
+      e.preventDefault();
+      setButtonState([true, "none", "grey", "black"]);
+      notify("info", "Please Wait...");
+
+      try {
+        const { data } = await api.post(`/admin/hat`, { email, pw });
+
+        if (data.sts === "ok") {
           notify("success", "Logged in Successfully!");
-          setAuthorized(newAdmin.email);
-          localStorage.setItem("admin", newAdmin.email);
+          setAuthorized(email);
+          localStorage.setItem("admin", email);
         } else {
-          notify("error", data.data.message);
+          notify("error", data.message);
         }
-      })
-      .catch(() => {
+      } catch {
         notify("error", "Network Error, Please Try Again.");
-      })
-      .finally(() => {
+      } finally {
         setButtonState([false, "all", "white", "black"]);
-      });
-  }, []);
+      }
+    },
+    [notify, setAuthorized, setButtonState]
+  );
 
   return (
     <div>
       {Authorized ? (
-        <>
-          <InvoiceTable
-            downloadInvoiceTable={downloadInvoiceTable}
-            buttonState={buttonState}
-            getResvs={getResvs}
-            resvs={resvs}
-          />
-        </>
+        <InvoiceTable
+          downloadInvoiceTable={downloadInvoiceTable}
+          buttonState={buttonState}
+          getResvs={getResvs}
+          resvs={resvs}
+        />
       ) : (
-        <>
-          <LoginForm submitAdmin={submitAdmin} buttonState={buttonState} />
-        </>
+        <LoginForm submitAdmin={submitAdmin} buttonState={buttonState} />
       )}
     </div>
   );

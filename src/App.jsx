@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,7 +11,7 @@ const Home = lazy(() => import("./Home"));
 const Dashboard = lazy(() => import("./dashboard"));
 
 export default function App() {
-  const [Authorized, setAuthorized] = useState("");
+  const [Authorized, setAuthorized] = useState(null);
   const [loading, setLoading] = useState(false);
   const [buttonState, setButtonState] = useState([
     false,
@@ -20,8 +20,13 @@ export default function App() {
     "black",
   ]);
 
-  const notify = (e, msg) => {
-    toast[e](msg, {
+  useEffect(() => {
+    const admin = localStorage.getItem("admin");
+    if (admin) setAuthorized(admin);
+  }, []);
+
+  const notify = useCallback((type, msg) => {
+    toast[type](msg, {
       position: "top-center",
       autoClose: 1500,
       hideProgressBar: false,
@@ -32,12 +37,12 @@ export default function App() {
       theme: "light",
       transition: Slide,
     });
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("admin");
-    setAuthorized("");
-  };
+    setAuthorized(null);
+  }, []);
 
   return (
     <Router>
