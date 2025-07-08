@@ -1,8 +1,14 @@
 import { useCallback, memo, useState, useRef } from "react";
 import "./Home.css";
 import api from "./api";
+import { FormEvent } from "react";
 
-const FormComp = memo(({ tableUpdater, buttonState }) => (
+type formCompProps = {
+  tableUpdater: (e: FormEvent) => Promise<void>;
+  buttonState: (string | boolean)[];
+};
+
+const FormComp = memo(({ tableUpdater, buttonState }: formCompProps) => (
   <form className="inputForm" onSubmit={tableUpdater} method="POST" id="form">
     <div>
       <div>
@@ -40,11 +46,20 @@ const FormComp = memo(({ tableUpdater, buttonState }) => (
     <button
       type="submit"
       className="slctbtn"
-      disabled={buttonState[0]}
+      disabled={!!buttonState[0]}
       style={{
-        pointerEvents: buttonState[1],
-        backgroundColor: buttonState[2],
-        color: buttonState[3],
+        pointerEvents:
+          typeof buttonState[1] === "string"
+            ? (buttonState[1] as React.CSSProperties["pointerEvents"])
+            : undefined,
+        backgroundColor:
+          typeof buttonState[2] === "string"
+            ? (buttonState[1] as React.CSSProperties["backgroundColor"])
+            : undefined,
+        color:
+          typeof buttonState[3] === "string"
+            ? (buttonState[1] as React.CSSProperties["color"])
+            : undefined,
       }}
     >
       Register
@@ -52,8 +67,19 @@ const FormComp = memo(({ tableUpdater, buttonState }) => (
   </form>
 ));
 
+type InvoiceCompProps = {
+  downloadInvoiceTable: () => Promise<void>;
+  invoiceData: {
+    userName: string;
+    phoneNum1: string;
+    year: string;
+    sid: string;
+  };
+  buttonState: (string | boolean)[];
+};
+
 const InvoiceComp = memo(
-  ({ downloadInvoiceTable, invoiceData, buttonState }) => (
+  ({ downloadInvoiceTable, invoiceData, buttonState }: InvoiceCompProps) => (
     <div className="invoice">
       <div className="invoiceForm">
         <div>
@@ -77,11 +103,20 @@ const InvoiceComp = memo(
       <button
         onClick={downloadInvoiceTable}
         className="dwnbtn"
-        disabled={buttonState[0]}
+        disabled={!!buttonState[0]}
         style={{
-          pointerEvents: buttonState[1],
-          backgroundColor: buttonState[2],
-          color: buttonState[3],
+          pointerEvents:
+            typeof buttonState[1] === "string"
+              ? (buttonState[1] as React.CSSProperties["pointerEvents"])
+              : undefined,
+          backgroundColor:
+            typeof buttonState[2] === "string"
+              ? (buttonState[1] as React.CSSProperties["backgroundColor"])
+              : undefined,
+          color:
+            typeof buttonState[3] === "string"
+              ? (buttonState[1] as React.CSSProperties["color"])
+              : undefined,
         }}
       >
         Download Ticket To View Code
@@ -90,9 +125,19 @@ const InvoiceComp = memo(
   )
 );
 
-export default memo(function Home({ notify, buttonState, setButtonState }) {
+type HomeProps = {
+  notify: (type: "error" | "warn" | "success" | "info", msg: string) => void;
+  buttonState: (string | boolean)[];
+  setButtonState: React.Dispatch<React.SetStateAction<(string | boolean)[]>>;
+};
+
+export default memo(function Home({
+  notify,
+  buttonState,
+  setButtonState,
+}: HomeProps) {
   const [Sidhash, setSidhash] = useState("");
-  const [invoice, setInvoice] = useState("none");
+  const [invoice, setInvoice] = useState<"none" | "block">("none");
   const [invoiceData, setInvoiceData] = useState({
     userName: "",
     phoneNum1: "",
@@ -102,16 +147,17 @@ export default memo(function Home({ notify, buttonState, setButtonState }) {
   const imgRef = useRef(null);
 
   const tableUpdater = useCallback(
-    async (e) => {
+    async (e: FormEvent) => {
       e.preventDefault();
       setButtonState([true, "none", "grey", "black"]);
       notify("info", "Please Wait...");
 
+      const form = e.target as HTMLFormElement;
       const newInvoiceData = {
-        userName: e.target.userName.value.trim(),
-        phoneNum1: e.target.phoneNum1.value.trim(),
-        year: e.target.year.value,
-        sid: e.target.sid.value.trim(),
+        userName: form.userName.value.trim(),
+        phoneNum1: form.phoneNum1.value.trim(),
+        year: form.year.value,
+        sid: form.sid.value.trim(),
       };
 
       const phoneRegex = /^[0-9]\d{10,14}$/;

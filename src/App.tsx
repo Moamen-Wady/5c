@@ -11,7 +11,7 @@ const Home = lazy(() => import("./Home"));
 const Dashboard = lazy(() => import("./dashboard"));
 
 export default function App() {
-  const [Authorized, setAuthorized] = useState(null);
+  const [Authorized, setAuthorized] = useState<null | string>(null);
   const [loading, setLoading] = useState(false);
   const [buttonState, setButtonState] = useState([
     false,
@@ -25,19 +25,22 @@ export default function App() {
     if (admin) setAuthorized(admin);
   }, []);
 
-  const notify = useCallback((type, msg) => {
-    toast[type](msg, {
-      position: "top-center",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Slide,
-    });
-  }, []);
+  const notify = useCallback(
+    (type: "error" | "warn" | "success" | "info", msg: string) => {
+      toast[type](msg, {
+        position: "top-center",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
+    },
+    []
+  );
 
   const logout = useCallback(() => {
     localStorage.removeItem("admin");
