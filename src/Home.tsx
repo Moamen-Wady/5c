@@ -174,20 +174,24 @@ export default memo(function Home({
         notify("error", "Phone number is invalid!");
         return setButtonState([false, "all", "white", "black"]);
       }
-
       setInvoiceData(newInvoiceData);
 
       try {
         const { data } = await api.post(`/reservations/`, newInvoiceData);
-        if (data.sts === "ok") {
-          notify("success", "Success!");
-          setSidhash(data.code);
-          setInvoice("block");
+        notify("success", "Success!");
+        setSidhash(data.code);
+        setInvoice("block");
+      } catch (err) {
+        console.log(err);
+        if (err.status == 409) {
+          notify("error", "This User Has a Reservation");
+        } else if (err.status == 410 && newInvoiceData.year == "intern") {
+          notify("error", "Sorry, All Intern Seats Have Been Reserved");
+        } else if (err.status == 410 && newInvoiceData.year !== "intern") {
+          notify("error", "Sorry, All Students' Seats Have Been Reserved");
         } else {
-          notify("error", data.message);
+          notify("error", "Network Error, Please Try Again");
         }
-      } catch {
-        notify("error", "Network Error, Please Try Again");
       } finally {
         setButtonState([false, "all", "white", "black"]);
       }

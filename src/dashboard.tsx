@@ -13,7 +13,7 @@ type Resv = {
 type InvoiceTableProps = {
   downloadInvoiceTable: () => Promise<void>;
   buttonState: (string | boolean)[];
-  getResvs: () => Promise<() => void>;
+  getResvs: (controller: AbortController) => Promise<void>;
   resvs: Resv[];
 };
 
@@ -23,76 +23,79 @@ const InvoiceTable = memo(
     buttonState,
     getResvs,
     resvs,
-  }: InvoiceTableProps) => (
-    <>
-      <div className="btnCont">
-        <button
-          className="dwn"
-          onClick={downloadInvoiceTable}
-          disabled={!!buttonState[0]}
-          style={{
-            pointerEvents:
-              typeof buttonState[1] === "string"
-                ? (buttonState[1] as React.CSSProperties["pointerEvents"])
-                : undefined,
-            backgroundColor:
-              typeof buttonState[2] === "string"
-                ? (buttonState[1] as React.CSSProperties["backgroundColor"])
-                : undefined,
-            color:
-              typeof buttonState[3] === "string"
-                ? (buttonState[1] as React.CSSProperties["color"])
-                : undefined,
-          }}
-        >
-          Download PDF
-        </button>
-        <button
-          className="dwn"
-          onClick={getResvs}
-          disabled={!!buttonState[0]}
-          style={{
-            pointerEvents:
-              typeof buttonState[1] === "string"
-                ? (buttonState[1] as React.CSSProperties["pointerEvents"])
-                : undefined,
-            backgroundColor:
-              typeof buttonState[2] === "string"
-                ? (buttonState[1] as React.CSSProperties["backgroundColor"])
-                : undefined,
-            color:
-              typeof buttonState[3] === "string"
-                ? (buttonState[1] as React.CSSProperties["color"])
-                : undefined,
-          }}
-        >
-          Refresh List
-        </button>
-      </div>
-      <table className="Displaytable">
-        <thead>
-          <tr>
-            <th>Number</th>
-            <th>Name</th>
-            <th>Phone Number</th>
-            <th>Year</th>
-            <th>Student ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {resvs.map((resv, index) => (
-            <tr key={` ${resv.sid}${resv.year}`}>
-              <td>{index + 1}</td>
-              <td>{resv.userName}</td>
-              <td>{resv.phoneNum1}</td>
-              <td>{resv.year}</td>
-              <td>{resv.sid}</td>
+  }: InvoiceTableProps) => {
+    let controller = new AbortController();
+    return (
+      <>
+        <div className="btnCont">
+          <button
+            className="dwn"
+            onClick={downloadInvoiceTable}
+            disabled={!!buttonState[0]}
+            style={{
+              pointerEvents:
+                typeof buttonState[1] === "string"
+                  ? (buttonState[1] as React.CSSProperties["pointerEvents"])
+                  : undefined,
+              backgroundColor:
+                typeof buttonState[2] === "string"
+                  ? (buttonState[1] as React.CSSProperties["backgroundColor"])
+                  : undefined,
+              color:
+                typeof buttonState[3] === "string"
+                  ? (buttonState[1] as React.CSSProperties["color"])
+                  : undefined,
+            }}
+          >
+            Download PDF
+          </button>
+          <button
+            className="dwn"
+            onClick={() => getResvs(controller)}
+            disabled={!!buttonState[0]}
+            style={{
+              pointerEvents:
+                typeof buttonState[1] === "string"
+                  ? (buttonState[1] as React.CSSProperties["pointerEvents"])
+                  : undefined,
+              backgroundColor:
+                typeof buttonState[2] === "string"
+                  ? (buttonState[1] as React.CSSProperties["backgroundColor"])
+                  : undefined,
+              color:
+                typeof buttonState[3] === "string"
+                  ? (buttonState[1] as React.CSSProperties["color"])
+                  : undefined,
+            }}
+          >
+            Refresh List
+          </button>
+        </div>
+        <table className="Displaytable">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Name</th>
+              <th>Phone Number</th>
+              <th>Year</th>
+              <th>Student ID</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
-  )
+          </thead>
+          <tbody>
+            {resvs.map((resv, index) => (
+              <tr key={` ${resv.sid}${resv.year}`}>
+                <td>{index + 1}</td>
+                <td>{resv.userName}</td>
+                <td>{resv.phoneNum1}</td>
+                <td>{resv.year}</td>
+                <td>{resv.sid}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    );
+  }
 );
 
 type LoginFormProps = {
@@ -156,24 +159,30 @@ export default memo(function Dashboard({
 }: dashboardProps) {
   const [resvs, setResvs] = useState<Resv[]>([]);
 
-  const getResvs = useCallback(async () => {
-    const controller = new AbortController();
-
-    try {
-      const response = await api.get("/reservations", {
-        signal: controller.signal,
-      });
-      setResvs(response.data.resvs);
-    } catch (err) {
-      if (!isCancel(err)) {
-        notify("error", "NETWORK ERROR, Failed to fetch reservations");
+  const getResvs = useCallback(
+    async (controller: AbortController) => {
+      try {
+        const response = await api.get("/reservations", {
+          signal: controller.signal,
+        });
+        setResvs(response.data.resvs);
+      } catch (err) {
+        if (!isCancel(err)) {
+          notify("error", "NETWORK ERROR, Failed to update reservations");
+        }
+      } finally {
+        controller.abort();
       }
-    }
-    return () => controller.abort();
-  }, [notify]);
+    },
+    [notify]
+  );
 
   useEffect(() => {
-    getResvs();
+    const controller = new AbortController();
+    getResvs(controller);
+    return () => {
+      controller.abort();
+    };
   }, [getResvs]);
 
   const downloadInvoiceTable = useCallback(async () => {
@@ -202,21 +211,23 @@ export default memo(function Dashboard({
       setButtonState([true, "none", "grey", "black"]);
       notify("info", "Please Wait...");
 
-      try {
-        const { data } = await api.post(`/admin/hat`, { email, pw });
-
-        if (data.sts === "ok") {
+      const res = await api
+        .post(`/admin/hat`, { email, pw })
+        .then((res) => {
           notify("success", "Logged in Successfully!");
           setAuthorized(email);
           localStorage.setItem("admin", email);
-        } else {
-          notify("error", data.message);
-        }
-      } catch {
-        notify("error", "Network Error, Please Try Again.");
-      } finally {
-        setButtonState([false, "all", "white", "black"]);
-      }
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            notify("error", "Password Is Incorrect");
+          } else if (err.status === 404) {
+            notify("error", "Admin Not Found.");
+          } else {
+            notify("error", "Network Error, Please Try Again.");
+          }
+        })
+        .finally(() => setButtonState([false, "all", "white", "black"]));
     },
     [notify, setAuthorized, setButtonState]
   );
