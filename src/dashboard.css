@@ -1,0 +1,72 @@
+.Displaytable {
+  font-size: var(--r1);
+  text-align: center;
+  margin: auto;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: black;
+  font-weight: bold;
+  background-color: #469dc0;
+  max-width: 80%;
+}
+.Displaytable th,
+.Displaytable td {
+  border: 4px solid;
+  text-align: center;
+  width: fit-content;
+  margin: auto;
+  border-collapse: collapse;
+  padding: var(--r05);
+}
+.dwn {
+  all: unset;
+  width: fit-content;
+  border: 1px solid black;
+  background-color: whitesmoke;
+  border-radius: 3px;
+  color: black;
+  cursor: pointer;
+  display: block;
+  margin: var(--r2);
+  padding: var(--r05);
+  font-size: var(--r105);
+}
+.dwn:hover {
+  background-color: #469dc0;
+  color: white;
+}
+.btnCont {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+#login {
+  display: block;
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(brown, darkcyan, #0f2a49);
+  padding: var(--r1);
+  border-radius: var(--r05);
+  border: 1px solid whitesmoke;
+  box-shadow: 2px 2px 5px white;
+}
+#login input {
+  display: block;
+  width: calc(var(--r5) * 5);
+  margin: var(--r1);
+  font-size: var(--r105);
+}
+#login input[type="submit"] {
+  display: block;
+  width: fit-content;
+  margin: auto;
+  font-size: var(--r105);
+  width: fit-content;
+  cursor: pointer;
+  padding: var(--r05);
+  border-radius: var(--r05);
+}
