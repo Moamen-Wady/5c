@@ -234,7 +234,7 @@ export default memo(function Dashboard({
 
   return (
     <div>
-      {Authorized ? (
+      {/* {Authorized ? (
         <InvoiceTable
           downloadInvoiceTable={downloadInvoiceTable}
           buttonState={buttonState}
@@ -243,7 +243,13 @@ export default memo(function Dashboard({
         />
       ) : (
         <LoginForm submitAdmin={submitAdmin} buttonState={buttonState} />
-      )}
+      )} */}
+      <InvoiceTable
+        downloadInvoiceTable={downloadInvoiceTable}
+        buttonState={buttonState}
+        getResvs={getResvs}
+        resvs={resvs}
+      />
     </div>
   );
 });
