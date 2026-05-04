@@ -1,0 +1,131 @@
+@media only screen and (min-width: 2000px) {
+  :root {
+    --r05: 1rem;
+    --r1: 2rem;
+    --r105: 3rem;
+    --r2: 4rem;
+    --r3: 6rem;
+    --r35: 7rem;
+    --r4: 8rem;
+    --r5: 6rem;
+  }
+  body header a {
+    font-size: var(--r1);
+  }
+}
+@media only screen and (max-width: 1999px) {
+  :root {
+    --r05: 0.75rem;
+    --r1: 1.5rem;
+    --r105: 2.25rem;
+    --r2: 3rem;
+    --r3: 4.5rem;
+    --r35: 5rem;
+    --r4: 6rem;
+    --r5: 7.5rem;
+  }
+}
+@media only screen and (max-width: 1620px) {
+  :root {
+    --r05: 0.5rem;
+    --r1: 1rem;
+    --r105: 1.5rem;
+    --r2: 2rem;
+    --r3: 3rem;
+    --r35: 3.5rem;
+    --r4: 4rem;
+    --r5: 5rem;
+  }
+}
+@media only screen and (max-width: 1365px) {
+  :root {
+    --r05: 0.4rem;
+    --r1: 0.8rem;
+    --r105: 1.2rem;
+    --r2: 1.6rem;
+    --r3: 2.4rem;
+    --r35: 2.8rem;
+    --r4: 3.2rem;
+    --r5: 4rem;
+  }
+}
+@media only screen and (max-width: 807px) {
+  :root {
+    --r05: 0.4rem;
+    --r1: 0.8rem;
+    --r105: 1.2rem;
+    --r2: 1.6rem;
+    --r3: 2.4rem;
+    --r35: 2.8rem;
+    --r4: 3.2rem;
+    --r5: 4rem;
+  }
+}
+@media only screen and (max-width: 590px) {
+  :root {
+    --r05: 0.3rem;
+    --r1: 0.65rem;
+    --r105: 0.85rem;
+    --r2: 1.2rem;
+    --r3: 1.8rem;
+    --r35: 2.1rem;
+    --r4: 2.6rem;
+    --r5: 3rem;
+  }
+  body header a {
+    font-size: var(--r105);
+  }
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-image: image-set(url("/bg.webp"), url("/bg.jpg"));
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  position: relative;
+  min-height: 100dvh;
+}
+header {
+  background-color: #0f2a49;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header > div {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+header > div > div {
+  width: max-content;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+header a {
+  all: unset;
+  text-decoration: none;
+  display: block;
+  width: max-content;
+  padding: var(--r05);
+  margin: 0 var(--r05);
+  cursor: pointer;
+  background-color: rgb(245, 245, 245, 0.5);
+  border: 1px solid white;
+  border-radius: 3px;
+}
+header a:hover {
+  background-color: rgb(245, 245, 245, 0.8);
+}
